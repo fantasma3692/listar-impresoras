@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.get('/api/impresora', (req, res) => {
   try {
-    const output = execSync('D:/PrinterRecognitionPlugin.exe').toString();
+    const output = execSync('PrinterRecognitionPlugin.exe').toString();
     const impresoras = output.split('\n').filter(line => line.trim() !== ''); // Parsea la salida del programa C#
     res.json(impresoras);
   } catch (error) {
