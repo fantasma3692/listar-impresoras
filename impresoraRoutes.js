@@ -5,10 +5,18 @@ const { execSync } = require('child_process');
 
 const router = express.Router();
 
+// Directorio donde moveremos el archivo para ejecutarlo
+const directorioEjecucion = '/tmp'; // Cambia esto según tus necesidades
+
 router.get('/api/impresora', (req, res) => {
   try {
-    const pluginPath = path.join(__dirname, 'PrinterRecognitionPlugin.exe'); // Construye la ruta completa del archivo
-    const output = execSync(pluginPath).toString();
+    // Mover el archivo a un directorio donde tengamos permisos de ejecución
+    const pluginPath = path.join(__dirname, 'PrinterRecognitionPlugin.exe');
+    const destino = path.join(directorioEjecucion, 'PrinterRecognitionPlugin.exe');
+    fs.renameSync(pluginPath, destino);
+
+    // Ejecutar el archivo desde su nueva ubicación
+    const output = execSync(destino).toString();
     const impresoras = output.split('\n').filter(line => line.trim() !== ''); // Parsea la salida del programa C#
     res.json(impresoras);
   } catch (error) {
@@ -18,4 +26,3 @@ router.get('/api/impresora', (req, res) => {
 });
 
 module.exports = router;
-
