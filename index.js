@@ -6,10 +6,23 @@ const path = require('path');
 const fs = require('fs');
 const app = express();
 
-const port = 3000;
+const port = process.env.PORT || 10000; // Usar el puerto definido por la variable de entorno PORT o 10000 como valor predeterminado
 app.use(cors()); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+
+// Endpoint para obtener la lista de impresoras disponibles
+app.get('/printers', async (req, res) => {
+  try {
+    // Utiliza printer.getPrinters() para obtener la lista de impresoras
+    const printers = await printer.getPrinters();
+    res.json(printers);
+  } catch (error) {
+    console.error('Error al obtener las impresoras:', error);
+    res.status(500).send('Error al obtener las impresoras');
+  }
+});
 
 app.post('/print', async (req, res) => {
   const { content, options } = req.body;
@@ -42,6 +55,6 @@ app.post('/print', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+app.listen(port,'0.0.0.0', () => {
   console.log(`Servidor de impresión escuchando en http://localhost:${port}`);
 });
